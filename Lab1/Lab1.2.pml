@@ -1,11 +1,11 @@
-mtype = {ok, err, msg1, msg2, msg3, keyA, keyB, agentA, agentB,
-     nonceA, nonceB };
+mtype = {ok, err, msg1, msg2, msg3, keyA, keyB,
+  agentA, agentB, nonceA, nonceB };
 
 typedef Crypt { mtype key, content1, content2 };
 
 chan network = [0] of {mtype, /* msg# */
-		       mtype, /* receiver */
-		       Crypt
+  mtype, /* receiver */
+  Crypt
 };
 
 /* global variables for verification*/
@@ -23,7 +23,7 @@ active proctype Alice() {
   Crypt data;      /* received encrypted message                   */
 
 
-  /* Initialization  */
+  /* Initialization */
 
   partnerA = agentB;
   pkey     = keyB;
@@ -39,8 +39,8 @@ active proctype Alice() {
   network ! msg1 (partnerA, messageAB);
 
   /* Wait for an answer. Observe that we are pattern-matching on the
-     messages that start with msg2 and agentA, that is, we block until 
-     we see a message with values msg2 and agentA as the first and second  
+     messages that start with msg2 and agentA, that is, we block until
+     we see a message with values msg2 and agentA as the first and second
      components. The third component is copied to the variable data. */
 
   network ? (msg2, agentA, data);
@@ -48,6 +48,7 @@ active proctype Alice() {
   /* We proceed only if the key field of the data matches keyA and the
      received nonce is the one that we have sent earlier; block
      otherwise.  */
+
   (data.key == keyA) && (data.content1 == nonceA);
 
   /* Obtain Bob's nonce */
@@ -60,39 +61,48 @@ active proctype Alice() {
   messageAB.content2 = 0;  /* content2 is not used in the last message,
                               just set it to 0 */
 
-
   /* Send the prepared messaage */
   network ! msg3 (partnerA, messageAB);
-
 
   /* and last - update the auxilary status variable */
   statusA = ok;
 }
 
 active proctype Bob() {
-     /* local variables */
-
+  /* local variables */
   mtype pkey;      /* the other agent's public key                 */
   mtype pnonce;    /* nonce that we receive from the other agent   */
-  Crypt messageBA; /* our encrypted message to the other party     */
+  Crypt messageAB; /* our encrypted message to the other party     */
   Crypt data;      /* received encrypted message                   */
 
+  /* Initialization  */
   partnerB = agentA;
   pkey     = keyA;
-  
-  network ? (msg1, agentB, data);
-    
-  
+
+  /* Wait for initial message from our partner */
+  network ? (msg1, agentB, data)
+
+  /* Verify message was for us and encrypted with the correct key */
+  (data.key == keyB) && (data.content1 == partnerB);
+
+  /* Store their nonce */
   pnonce = data.content2;
-  
-  messageBA.key = pkey;
-  messageBA.content1 = pnonce;
-  messageBA.content2 = agentB;
 
-  network ! msg2 (partnerB, messageBA);
+  /* Reply with their nonce (authentication) and our nonce (confidentiality) */
+  messageAB.key = pkey;
+  messageAB.content1 = pnonce;
+  messageAB.content2 = nonceB;
 
-  network ? (msg3, agentB, data);
+  /* Send message */
+  network ! msg2 (partnerB, messageAB)
 
+  /* Wait for nonce verification message (final authentication) */
+  network ? (msg3, agentB, data)
 
+  /* Verify message */
+  (data.key == keyB) && (data.content1 == nonceB);
+
+  /* Done! Channel ready */
   statusB = ok;
 }
+
