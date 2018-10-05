@@ -1,0 +1,17 @@
+Task 2
+The assertion in this task is that both statusA and statusB should be ok. Since we do want this assertion to break under any of the runs the acceptance mode are chosen. Fairness should do no difference since both Alice and Bob will wait for the other to answer. Alas they can be as greedy as they want because they naturally need responses from each other and will not prohibit the other from executing.
+
+Task 3
+The same principle stands on task 3 as task 2. The difference here is only the case that the intruder will cause errors since not all communications will succeed. Fairness does not change the outcome in all cases, but it brings the failures (i.e. when intruder sends invalid messages) down by a quarter from about a million to a quarter million.
+
+The failure in task 3 is due to the intruder inserting bad messages which locks Alice and/or Bob which then never sets statusX == ok. We can clearly see this in the trail since the first thing happening is the intruder sending a msg1 type which is received by Bob who blocks on the bad incoming data, and Alice blocks waiting for a msg2 from Bob. This is one of the examples in which the intruder causes an error.
+
+Task 6
+We used safety to verify the formulas in task 6 since these are conditions which depend on premises and not necessarily end states. However, since all premises are based on “statusX” they are essentially acceptance runs (end states) and acceptance will function equally.
+
+Property 1 and 3 are violated in task 6, i.e. there is a case when Alice and Bob succeeds but they are not partners. As well as Bob might succeed and thinking his partner is Alice, but the Intruder knows his nonce. Both of these violations are thus successful intrusions by the intruder.
+
+The trail shows this clearly as the case when Alice targets the Intruder, which re-encrypts the incoming data (Alice identity and her nonce) for Bob and then relays it to Bob. Bob happily thinks he’s talking to Alice and sends his nonce back. The intruder cannot read Bobs response since it’s encrypted to Alice, so he relays it to Alice. Alice finalises by responding with the decrypted nonce from Bob, but this time with the intruders key (she thinks the intruder is Bob). Now the intruder knows both Alice and Bob’s nonces, and finally relays the nonce to Bob and is now an accepted middle man.
+
+Task 7
+The patch added identity verification on the response from the initiation message, alas Bobs response to Alice’s initiation. As such, if we don’t get the identity of the counterpart we initiated with, that’s a sign of a man in the middle attack. The effect is that Alice now sees that the intruder is not Bob and cancels the protocol setup. Thus the authentication of the protocol now works properly since the key is now tied to the identity.
