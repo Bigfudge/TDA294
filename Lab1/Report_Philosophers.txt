@@ -1,0 +1,5 @@
+Report for Philosopher problem on Lab 1
+1. After each loop of the phil() we do two assertions. The first one to confirm that the philosopher indeed is holding in the two closest forks. The second assertion confirms that the to forks next to the philosopher is taken. If both of these assertion is true we know that the property of the forks holds.
+2. The first assertion helps us confirm the absence of deadlocks because the state when both forks are aquired can be viewed as a normal endstate. If the philospher makes this assertion false we know that the process is in a abnormal endstate. Since the assertion is never broken we know that we do not have any deadlocks.
+3.(How strong fairness assumptions do you need for starvation freedom to hold? I.e., can you do without any additional assumptions, or do you need weak or strong fairness? An informal, but still rigorous, argument is sufficient here.)
+4. 
