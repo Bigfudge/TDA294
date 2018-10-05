@@ -1,8 +1,9 @@
 #define NUM_PHIL 5
 
-bool forks[NUM_PHIL];
+int forks[NUM_PHIL];
 
 proctype phil(int id) {
+end: /* The philosopher is allowed to be in any state */
   do
     :: printf("Philosopher %d is thinking\n", id);
 
@@ -26,8 +27,8 @@ proctype phil(int id) {
             /* Acquire left fork first */
             atomic {
               do
-                :: !forks[leftfork] ->
-                   forks[leftfork] = true;
+                :: forks[leftfork] == 0 ->
+                   forks[leftfork]++;
                    leftforkacquired = true;
 
                 :: leftforkacquired -> break
@@ -38,26 +39,26 @@ proctype phil(int id) {
             atomic {
               if
                 /* Right fork is usable */
-                :: !forks[rightfork] ->
-                   forks[rightfork] = true;
+                :: forks[rightfork] == 0 ->
+                   forks[rightfork]++;
                    rightforkacquired = true;
 
                 /* Right fork is unusable, release left for and restart */
                 :: else ->
-                   forks[leftfork] = false;
+                   forks[leftfork]--;
                    leftforkacquired = false;
               fi
             }
        od
        assert(leftforkacquired && rightforkacquired);
-       assert(forks[leftfork] && forks[rightfork]);
+       assert(forks[leftfork] == 1 && forks[rightfork] == 1);
 
        /* Eat */
        printf("Philosopher %d is eating with forks %d and %d\n", id, leftfork, rightfork);
-
+progress: /* Consider passing eat as progress */
        /* Return forks */
-       forks[rightfork] = false;
-       forks[leftfork] = false;
+       forks[rightfork]--;
+       forks[leftfork]--;
   od
 }
 
@@ -69,4 +70,14 @@ init  {
     :: else -> run phil(i);
                i++
   od
+}
+
+ltl verify {
+  [](
+    forks[0] <= 1 &&
+    forks[1] <= 1 &&
+    forks[2] <= 1 &&
+    forks[3] <= 1 &&
+    forks[4] <= 1
+  )
 }
