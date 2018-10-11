@@ -150,5 +150,5 @@ active proctype Intruder() {
 }
 
 ltl task2 {
-  <>(statusA == ok) && <>(statusB == ok)
+  <>(statusA == ok && statusB == ok)
 }
