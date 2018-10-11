@@ -1,0 +1,41 @@
+proc 0 = Alice
+proc 1 = Bob
+proc 2 = Intruder
+ltl propA: [] ((! (((statusA==ok)) && ((partnerA==agentB)))) || (! (knows_nonceA)))
+ltl propB: [] ((! (((statusB==ok)) && ((partnerB==agentA)))) || (! (knows_nonceB)))
+ltl propAB: [] ((! (((statusA==ok)) && ((statusB==ok)))) || (((partnerA==agentB)) && ((partnerB==agentA))))
+starting claim 5
+using statement merging
+Never claim moves to line 22	[(1)]
+q\p   0   1   2
+  1   network!msg1,agentI,keyI,agentA,nonceA
+  1   .   .   network?msg1,agentI,keyI,agentA,nonceA
+  1   .   .   network!msg1,agentB,keyB,agentA,nonceA
+  1   .   network?msg1,agentB,keyB,agentA,nonceA
+  1   .   network!msg2,agentA,keyA,nonceA,nonceB
+  1   .   .   network?msg2,agentA,keyA,nonceA,nonceB
+  1   .   .   network!msg2,agentA,keyA,nonceA,nonceB
+  1   network?msg2,agentA,keyA,nonceA,nonceB
+  1   network!msg3,agentI,keyI,nonceB,0
+  1   .   .   network?msg3,agentI,keyI,nonceB,0
+  1   .   .   network!msg3,agentB,keyB,nonceB,nonceA
+  1   .   network?msg3,agentB,keyB,nonceB,nonceA
+spin: _spin_nvr.tmp:21, Error: assertion violated
+spin: text of failed assertion: assert(!(!((!(((statusA==ok)&&(statusB==ok)))||((partnerA==agentB)&&(partnerB==agentA))))))
+Never claim moves to line 21	[assert(!(!((!(((statusA==ok)&&(statusB==ok)))||((partnerA==agentB)&&(partnerB==agentA))))))]
+spin: trail ends after 103 steps
+-------------
+final state:
+-------------
+#processes: 3
+		partnerA = agentI
+		partnerB = agentA
+		statusA = ok
+		statusB = ok
+		knows_nonceA = 1
+		knows_nonceB = 1
+103:	proc  2 (Intruder:1) NS6.pml:195 (state 63)
+103:	proc  1 (Bob:1) NS6.pml:110 (state 13) <valid end state>
+103:	proc  0 (Alice:1) NS6.pml:72 (state 21) <valid end state>
+103:	proc  - (propAB:1) _spin_nvr.tmp:20 (state 6)
+3 processes created
