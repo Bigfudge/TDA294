@@ -177,6 +177,11 @@ active proctype Intruder() {
               :: knows_nonceA -> data.content1 = nonceA;
               :: knows_nonceB -> data.content1 = nonceB;
             fi ;
+            if /* assemble content3 */
+              :: data.content3 = agentA;
+              :: data.content3 = agentB;
+              :: data.content3 = agentI;
+            fi ;
             if /* assemble key */
               :: data.key = keyA;
               :: data.key = keyB;
