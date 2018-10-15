@@ -29,7 +29,9 @@ prohibits two philosophers from grabbing the same fork and wrongly think
 that the fork is properly acquired. Without atomicity both could grab the
 fork succesfully and proceed.
 
-2. The first assertion helps us confirm the absence of deadlocks because the state when both forks are aquired can be viewed as a normal endstate. If the philospher makes this assertion false we know that the process is in a abnormal endstate. Since the assertion is never broken we know that we do not have any deadlocks.
+2. Since all the philosophers always pick up the left fork first and do not try to pick up the right one before the left fork is aquired. If the right fork is then not available when we try to aquire it, the left fork is put back. Thus it is in inpossible that we get in a state where all philosopher holds one forks and waits for a another forever(deadlock).
+
+In order to verify this, we made use of of SPIN by using the command "spin -search -noclaim Philosophers.pml". From the output from SPIN we could verify that our program did not reach any invalid endstates (no deadlocks). 
 
 # 3. How strong fairness assumptions do you need for starvation freedom to hold?
 Since this is a liveness property, there needs to be atleast some fairness. All
