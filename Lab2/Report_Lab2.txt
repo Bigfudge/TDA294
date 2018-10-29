@@ -1,3 +1,9 @@
+Report Group 16
+
+By:
+Simon Persson
+Patrick Wadström
+
 # Problem 3
 
 ## Task 3.1
@@ -32,5 +38,6 @@ The loop invariant was modified from
 `@ 0 <= i && i <= canvas[depth].length`
 
 # Problem 4
-
-
+We implemented the code for all the function according to the specifications in NumericTextBox.java.
+Each function were then proven using KeY, the proofs are handed in with the solution.
+Some alterations to the code and JML were needed during the process when errors were found.
