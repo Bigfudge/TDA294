@@ -38,7 +38,7 @@ public class NumericTextBox
 	 */
 	private /*@ spec_public non_null @*/ int[] content;
 
-  /*@ public invariant (\forall int x; 0 <= x && x < cursorPosition && x < content.length; isSingleDigit(content[x])); @*/
+  /*@ public invariant (\forall int x; 0 <= x && x < cursorPosition; isSingleDigit(content[x])); @*/
   /*@ public invariant (\forall int x; x >= cursorPosition && x < content.length; content[x] == EMPTY); @*/
 
 	/**
@@ -99,19 +99,19 @@ public class NumericTextBox
   /*@ public normal_behavior
     @ ensures cursorPosition == 0;
     @ ensures textBoxRenderer != null ==> textBoxRenderer.contentChanged;
+    @ ensures (\forall int x; x >= 0 && x < content.length; content[x] == EMPTY);
     @ assignable content[*], cursorPosition, textBoxRenderer.contentChanged;
-    @ diverges true;
     @*/
 	public void clear()
 	{
-    cursorPosition = 0;
     /*@ loop_invariant
       @ 0 <= i && i <= content.length
       @  && (\forall int x; 0 <= x && x < i; content[x] == EMPTY);
       @ assignable content[*];
-      @ decreasing i;
+      @ decreasing content.length - i;
       @*/
     for(int i=0; i < content.length; i++) content[i] = EMPTY;
+    cursorPosition = 0;
 
     if (textBoxRenderer != null) {
       textBoxRenderer.contentChanged = true;
@@ -197,6 +197,7 @@ public class NumericTextBox
     @ requires cursorPosition > 0;
     @ ensures cursorPosition == \old(cursorPosition) - 1;
     @ ensures content[cursorPosition] == EMPTY;
+    @ ensures textBoxRenderer != null ==> textBoxRenderer.contentChanged;
     @
     @ also
     @
@@ -222,6 +223,7 @@ public class NumericTextBox
 
     cursorPosition--;
     content[cursorPosition] = EMPTY;
+    if (textBoxRenderer != null) textBoxRenderer.contentChanged = true;
 	}
 }
 
