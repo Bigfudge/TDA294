@@ -1,0 +1,36 @@
+# Problem 3
+
+## Task 3.1
+We used inlining on `report` as the code was actually quite pure but the specification not so.
+We used contracts on `eliminateDuplicates` and `search` the contract helped more than the loops.
+
+We had to manually instantiate T from the forall loop on self.query to properly close the proof.
+
+## Task 3.2
+
+The JML specification had a require line which was not enforced by the implementation,
+
+`@ requires numbers.length == 0 && numbers != null;`
+
+was implemented using
+
+```
+    if (numbers != null && numbers.length == 0) {
+      this.size = -1;
+      throw new RuntimeException("");
+    }
+```
+
+## Task 3.3
+
+Proof is supplied.
+
+The minor error was that the loop invariant did not hold __after__ the loop has ended.
+The loop invariant was modified from
+
+`@ 0 <= i && i < canvas[depth].length` to
+`@ 0 <= i && i <= canvas[depth].length`
+
+# Problem 4
+
+
